@@ -29,3 +29,6 @@ docs
 .history
 /.history
 /.history/
+
+scripts/
+scripts
