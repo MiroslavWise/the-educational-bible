@@ -1,20 +1,13 @@
 ---
-import HelloAstryx from '../components/HelloAstryx';
-import Layout from '../layouts/Layout.astro';
+import { getCollection } from "astro:content"
+import Layout from "../layouts/Layout.astro"
+import HomePage from "../components/HomePage"
+import { sortBooks, toSummary } from "../lib/bible"
+
+const entries = await getCollection("books")
+const books = sortBooks(entries.map((e) => toSummary(e.data)))
 ---
 
 <Layout>
-	<main>
-		<HelloAstryx client:load />
-	</main>
+  <HomePage client:load books={books} />
 </Layout>
-
-<style>
-	main {
-		display: flex;
-		min-height: 100vh;
-		align-items: center;
-		justify-content: center;
-		padding: var(--spacing-4);
-	}
-</style>

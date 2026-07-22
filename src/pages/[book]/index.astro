@@ -1,0 +1,28 @@
+---
+import { getCollection } from "astro:content"
+import Layout from "../../layouts/Layout.astro"
+import BookPage from "../../components/BookPage"
+
+export async function getStaticPaths() {
+  const entries = await getCollection("books")
+  return entries.map((e) => ({
+    params: { book: e.data.slug },
+    props: { data: e.data },
+  }))
+}
+
+const { data } = Astro.props
+const book = {
+  slug: data.slug,
+  name: data.name,
+  fullName: data.fullName,
+  testament: data.testament,
+  chaptersCount: data.chaptersCount,
+  introduction: data.introduction,
+  articles: data.articles,
+}
+---
+
+<Layout title={`${data.fullName} — Женевская учебная Библия`}>
+  <BookPage client:load book={book} />
+</Layout>

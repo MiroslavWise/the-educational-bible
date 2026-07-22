@@ -1,0 +1,29 @@
+---
+import { getCollection } from "astro:content"
+import Layout from "../../layouts/Layout.astro"
+import ChapterPage from "../../components/ChapterPage"
+import { chapterNav, getChapter } from "../../lib/bible"
+
+export async function getStaticPaths() {
+  const entries = await getCollection("books")
+  const paths = []
+  for (const e of entries) {
+    for (const ch of e.data.chapters) {
+      paths.push({
+        params: { book: e.data.slug, chapter: String(ch.number) },
+        props: { data: e.data, chapterNumber: ch.number },
+      })
+    }
+  }
+  return paths
+}
+
+const { data, chapterNumber } = Astro.props
+const chapter = getChapter(data, chapterNumber)!
+const nav = chapterNav(data, chapterNumber)
+const book = { slug: data.slug, name: data.name, chaptersCount: data.chaptersCount }
+---
+
+<Layout title={`${data.name} ${chapterNumber} — Женевская учебная Библия`}>
+  <ChapterPage client:load book={book} chapter={chapter} nav={nav} />
+</Layout>

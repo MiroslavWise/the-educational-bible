@@ -1,3 +1,253 @@
 @import "@astryxdesign/core/reset.css";
 @import "@astryxdesign/core/astryx.css";
 @import "@astryxdesign/theme-neutral/theme.css";
+
+/* ------------------------------------------------------------------ *
+ * The Educational Bible — reader styles.
+ * Only Astryx design tokens are used (colors auto-switch light/dark).
+ * ------------------------------------------------------------------ */
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--color-background-body);
+  color: var(--color-text-primary);
+}
+
+.tb-app {
+  min-height: 100vh;
+}
+
+/* Sticky top bar */
+.tb-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: color-mix(in srgb, var(--color-background-surface) 88%, transparent);
+  backdrop-filter: saturate(1.4) blur(10px);
+  border-bottom: var(--border-width) solid var(--color-border);
+}
+
+.tb-brand {
+  text-decoration: none;
+  color: var(--color-text-primary);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* Generic page container */
+.tb-page {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: var(--spacing-8) var(--spacing-5) var(--spacing-12);
+}
+
+/* ---------- Home ---------- */
+.tb-hero {
+  padding: var(--spacing-10) var(--spacing-5) var(--spacing-8);
+  max-width: 760px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.tb-book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--spacing-4);
+}
+
+/* ---------- Chapter number grid ---------- */
+.tb-chapter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+  gap: var(--spacing-2);
+}
+
+.tb-chapter-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-element);
+  border: var(--border-width) solid var(--color-border);
+  background: var(--color-background-card);
+  color: var(--color-text-primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.12s ease, border-color 0.12s ease, transform 0.12s ease;
+}
+
+.tb-chapter-cell:hover {
+  background: var(--color-overlay-hover);
+  border-color: var(--color-border-emphasized);
+  transform: translateY(-1px);
+}
+
+/* ---------- Reader ---------- */
+.tb-reader {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-6) var(--spacing-5) var(--spacing-12);
+}
+
+.tb-reader-toolbar {
+  position: sticky;
+  top: 57px;
+  z-index: 10;
+  background: color-mix(in srgb, var(--color-background-body) 90%, transparent);
+  backdrop-filter: blur(6px);
+  padding-block: var(--spacing-3);
+  margin-bottom: var(--spacing-4);
+  border-bottom: var(--border-width) solid var(--color-border);
+}
+
+.tb-reader-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--spacing-8);
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .tb-reader-grid.has-aside {
+    grid-template-columns: minmax(0, 1fr) 360px;
+  }
+}
+
+.tb-scripture {
+  max-width: 70ch;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.tb-verse {
+  font-size: 1.18rem;
+  line-height: 1.95;
+  color: var(--color-text-primary);
+  scroll-margin-top: 120px;
+}
+
+.tb-verse[data-active="true"] {
+  background: var(--color-accent-muted);
+  border-radius: var(--radius-inner);
+  box-shadow: 0 0 0 6px var(--color-accent-muted);
+}
+
+.tb-verse-num {
+  font-size: 0.66em;
+  font-weight: 700;
+  color: var(--color-text-accent);
+  vertical-align: super;
+  margin-inline-end: 0.25em;
+  font-feature-settings: "tnum";
+}
+
+.tb-star,
+.tb-xref {
+  vertical-align: super;
+  font-size: 0.62em;
+  line-height: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  padding: 0 0.1em;
+  font-weight: 700;
+  border-radius: var(--radius-inner);
+}
+
+.tb-star {
+  color: var(--color-text-accent);
+}
+
+.tb-xref {
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.tb-star:hover,
+.tb-xref:hover {
+  background: var(--color-accent-muted);
+}
+
+.tb-star:focus-visible,
+.tb-xref:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+.tb-subheading {
+  display: block;
+  margin-top: var(--spacing-7);
+  margin-bottom: var(--spacing-2);
+}
+
+/* Comments aside */
+.tb-aside {
+  position: sticky;
+  top: 120px;
+  align-self: start;
+  max-height: calc(100vh - 140px);
+  overflow: auto;
+  padding-inline-end: var(--spacing-1);
+}
+
+.tb-comment {
+  scroll-margin-top: var(--spacing-6);
+}
+
+.tb-comment[data-active="true"] {
+  box-shadow: var(--shadow-inset-selected);
+}
+
+.tb-comment-key {
+  color: var(--color-text-accent);
+  font-weight: 700;
+  font-feature-settings: "tnum";
+}
+
+.tb-lemma {
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+/* Popover comment body scroll cap */
+.tb-popover-comments {
+  max-width: 340px;
+  max-height: 320px;
+  overflow: auto;
+}
+
+/* Prose (introduction / articles) */
+.tb-prose {
+  max-width: 68ch;
+}
+
+.tb-prose p {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--spacing-3);
+}
+
+/* Utility */
+.tb-muted {
+  color: var(--color-text-secondary);
+}
+
+.tb-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 640px) {
+  .tb-verse {
+    font-size: 1.08rem;
+    line-height: 1.85;
+  }
+  .tb-page,
+  .tb-reader {
+    padding-inline: var(--spacing-4);
+  }
+}
