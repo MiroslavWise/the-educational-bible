@@ -1,10 +1,9 @@
-import { Fragment, useState } from "react"
+import { Fragment } from "react"
 import { VStack, HStack } from "@astryxdesign/core/Layout"
 import { Heading } from "@astryxdesign/core/Heading"
 import { Text } from "@astryxdesign/core/Text"
 import { Badge } from "@astryxdesign/core/Badge"
 import { Button } from "@astryxdesign/core/Button"
-import { Switch } from "@astryxdesign/core/Switch"
 import { Divider } from "@astryxdesign/core/Divider"
 import { Popover } from "@astryxdesign/core/Popover"
 import { Breadcrumbs, BreadcrumbItem } from "@astryxdesign/core/Breadcrumbs"
@@ -46,29 +45,40 @@ function CommentCard({ comment }: { comment: Comment }) {
   )
 }
 
-function CommentsPopover({ verse, comments }: { verse: Verse; comments: Comment[] }) {
+function CommentsBody({
+  verse,
+  comments,
+}: {
+  verse: Verse
+  comments: Comment[]
+}) {
+  const refs = verse.crossRefs
   return (
-    <Popover
-      label={`Толкования к стиху ${verse.number}`}
-      placement="below"
-      width={360}
-      content={
-        <div className="tb-popover-comments">
-          <VStack gap={3}>
-            {comments.map((c, i) => (
-              <div key={c.key + i}>
-                {i > 0 && <Divider />}
-                <CommentCard comment={c} />
-              </div>
-            ))}
-          </VStack>
-        </div>
-      }
-    >
-      <button className="tb-star" aria-label={`Толкование к стиху ${verse.number}`}>
-        ∗
-      </button>
-    </Popover>
+    <div className="tb-popover-comments">
+      <VStack gap={3}>
+        {comments.map((c, i) => (
+          <div key={c.key + i}>
+            {i > 0 && <Divider />}
+            <CommentCard comment={c} />
+          </div>
+        ))}
+        {refs && refs.length > 0 && (
+          <>
+            <Divider />
+            <VStack gap={1}>
+              <Text type="label" color="secondary">
+                Параллельные места
+              </Text>
+              {refs.map((r: CrossRef, i) => (
+                <Text key={i} as="p" type="supporting">
+                  {r.ref}
+                </Text>
+              ))}
+            </VStack>
+          </>
+        )}
+      </VStack>
+    </div>
   )
 }
 
@@ -79,6 +89,7 @@ function CrossRefsPopover({ verse }: { verse: Verse }) {
       label={`Параллельные места к стиху ${verse.number}`}
       placement="below"
       width={240}
+      hasCloseButton={false}
       content={
         <VStack gap={1}>
           <Text type="label" color="secondary">
@@ -101,15 +112,60 @@ function CrossRefsPopover({ verse }: { verse: Verse }) {
 
 function VerseView({ verse, chapter }: { verse: Verse; chapter: Chapter }) {
   const comments = verse.hasComment ? commentsForVerse(chapter, verse.number) : []
-  return (
-    <Text as="span" type="inherit">
-      <span className="tb-verse-num">{verse.number}</span>
-      {verse.hasComment && comments.length > 0 && (
-        <CommentsPopover verse={verse} comments={comments} />
+  const hasComment = verse.hasComment && comments.length > 0
+  const hasXref = Boolean(verse.crossRefs && verse.crossRefs.length > 0)
+
+  const marks = (hasComment || hasXref) && (
+    <sup className="tb-verse-marks">
+      {hasComment && (
+        <span className="tb-star" aria-hidden="true">
+          ∗
+        </span>
       )}
-      {verse.crossRefs && verse.crossRefs.length > 0 && <CrossRefsPopover verse={verse} />}{" "}
-      {verse.text}{" "}
-    </Text>
+      {!hasComment && hasXref && <CrossRefsPopover verse={verse} />}
+      {hasComment && hasXref && (
+        <span className="tb-xref" aria-hidden="true">
+          ⌖
+        </span>
+      )}
+    </sup>
+  )
+
+  const inner = (
+    <>
+      <span className="tb-verse-ref">
+        <span className="tb-verse-num">{verse.number}</span>
+        {marks}
+      </span>
+      {verse.text}
+    </>
+  )
+
+  if (!hasComment) {
+    return (
+      <p className="tb-verse" id={`v${verse.number}`}>
+        {inner}
+      </p>
+    )
+  }
+
+  return (
+    <Popover
+      label={`Толкования к стиху ${verse.number}`}
+      placement="below"
+      width={360}
+      hasCloseButton={false}
+      content={<CommentsBody verse={verse} comments={comments} />}
+    >
+      <button
+        type="button"
+        className="tb-verse tb-verse--has-comment"
+        id={`v${verse.number}`}
+        aria-label={`Стих ${verse.number}. Открыть толкование`}
+      >
+        {inner}
+      </button>
+    </Popover>
   )
 }
 
@@ -119,6 +175,7 @@ function ChapterPicker({ book, current }: { book: Props["book"]; current: number
       label="Выбрать главу"
       placement="below"
       width={320}
+      hasCloseButton={false}
       content={
         <div className="tb-chapter-grid" style={{ maxWidth: 300 }}>
           {Array.from({ length: book.chaptersCount }, (_, i) => i + 1).map((n) => (
@@ -150,7 +207,6 @@ function ChapterPicker({ book, current }: { book: Props["book"]; current: number
 }
 
 export default function ChapterPage({ book, chapter, nav }: Props) {
-  const [showPanel, setShowPanel] = useState(false)
   const go = (n: number) => {
     window.location.href = `/${book.slug}/${n}`
   }
@@ -189,23 +245,16 @@ export default function ChapterPage({ book, chapter, nav }: Props) {
               <BreadcrumbItem href={`/${book.slug}`}>{book.name}</BreadcrumbItem>
               <BreadcrumbItem isCurrent>Глава {chapter.number}</BreadcrumbItem>
             </Breadcrumbs>
-            <HStack gap={4} vAlign="center" wrap="wrap">
-              <Switch
-                value={showPanel}
-                onChange={(checked) => setShowPanel(checked)}
-                label="Толкования рядом"
-              />
-              <NavButtons />
-            </HStack>
+            <NavButtons />
           </HStack>
         </div>
 
-        <div className={`tb-reader-grid${showPanel ? " has-aside" : ""}`}>
+        <div className="tb-reader-grid">
           <article className="tb-scripture">
             <Heading level={1} accessibilityLevel={1}>
               {book.name}. Глава {chapter.number}
             </Heading>
-            <div className="tb-verse" style={{ marginTop: "var(--spacing-5)" }}>
+            <div className="tb-verses" style={{ marginTop: "var(--spacing-5)" }}>
               {chapter.verses.map((v) => (
                 <Fragment key={v.number}>
                   {v.subheading && (
@@ -223,23 +272,6 @@ export default function ChapterPage({ book, chapter, nav }: Props) {
               <NavButtons />
             </div>
           </article>
-
-          {showPanel && (
-            <aside className="tb-aside">
-              <VStack gap={4}>
-                <Heading level={2}>Толкования</Heading>
-                {chapter.comments.length === 0 && (
-                  <Text type="supporting">К этой главе нет толкований.</Text>
-                )}
-                {chapter.comments.map((c, i) => (
-                  <div key={c.key + i} className="tb-comment">
-                    <CommentCard comment={c} />
-                    {i < chapter.comments.length - 1 && <Divider />}
-                  </div>
-                ))}
-              </VStack>
-            </aside>
-          )}
         </div>
       </div>
     </Shell>

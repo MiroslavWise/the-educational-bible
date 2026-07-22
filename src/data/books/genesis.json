@@ -6,6 +6,9 @@
  "abbr": "Быт.",
  "testament": "ot",
  "order": 1,
+ "title_page": 19,
+ "end_page": 102,
+ "canon_ch": 50,
  "chaptersCount": 50,
  "introduction": [
   {
