@@ -3,6 +3,7 @@ import { getCollection } from "astro:content"
 import Layout from "../../layouts/Layout.astro"
 import ChapterPage from "../../components/ChapterPage"
 import { chapterNav, getChapter } from "../../lib/bible"
+import { chapterDescription, chapterTitle } from "../../lib/seo"
 
 export async function getStaticPaths() {
   const entries = await getCollection("books")
@@ -22,8 +23,66 @@ const { data, chapterNumber } = Astro.props
 const chapter = getChapter(data, chapterNumber)!
 const nav = chapterNav(data, chapterNumber)
 const book = { slug: data.slug, name: data.name, chaptersCount: data.chaptersCount }
+
+const path = `/${data.slug}/${chapterNumber}/`
+const title = chapterTitle(data.name, chapterNumber)
+const description = chapterDescription(
+  data.name,
+  chapterNumber,
+  chapter.verses.map((v) => v.text),
+)
+
+const jsonLd = [
+  {
+    "@type": "CreativeWork",
+    name: `${data.name}, глава ${chapterNumber}`,
+    headline: `${data.name}. Глава ${chapterNumber}`,
+    url: new URL(path, Astro.site).href,
+    inLanguage: "ru",
+    description,
+    isPartOf: {
+      "@type": "Book",
+      name: data.fullName,
+      url: new URL(`/${data.slug}/`, Astro.site).href,
+    },
+    hasPart: chapter.verses.slice(0, 5).map((v) => ({
+      "@type": "CreativeWork",
+      position: v.number,
+      text: v.text,
+    })),
+  },
+  {
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Главная",
+        item: Astro.site?.href ?? "/",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: data.name,
+        item: new URL(`/${data.slug}/`, Astro.site).href,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: `Глава ${chapterNumber}`,
+        item: new URL(path, Astro.site).href,
+      },
+    ],
+  },
+]
 ---
 
-<Layout title={`${data.name} ${chapterNumber} — Женевская учебная Библия`}>
+<Layout
+  title={title}
+  description={description}
+  path={path}
+  ogType="article"
+  jsonLd={jsonLd}
+>
   <ChapterPage client:load book={book} chapter={chapter} nav={nav} />
 </Layout>

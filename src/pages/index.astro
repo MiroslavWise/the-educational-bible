@@ -3,11 +3,36 @@ import { getCollection } from "astro:content"
 import Layout from "../layouts/Layout.astro"
 import HomePage from "../components/HomePage"
 import { sortBooks, toSummary } from "../lib/bible"
+import { SITE_NAME, SITE_TAGLINE } from "../lib/seo"
 
 const entries = await getCollection("books")
 const books = sortBooks(entries.map((e) => toSummary(e.data)))
+
+const jsonLd = [
+  {
+    "@type": "WebSite",
+    name: SITE_NAME,
+    description: SITE_TAGLINE,
+    url: Astro.site?.href ?? "/",
+    inLanguage: "ru",
+  },
+  {
+    "@type": "Book",
+    name: SITE_NAME,
+    alternateName: "Geneva Study Bible",
+    inLanguage: "ru",
+    bookFormat: "https://schema.org/EBook",
+    about: "Библия, синодальный перевод, толкования",
+  },
+]
 ---
 
-<Layout>
+<Layout
+  title={SITE_NAME}
+  description={SITE_TAGLINE}
+  path="/"
+  ogType="website"
+  jsonLd={jsonLd}
+>
   <HomePage client:load books={books} />
 </Layout>

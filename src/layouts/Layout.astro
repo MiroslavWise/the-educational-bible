@@ -1,15 +1,37 @@
 ---
 import "../styles/globals.css"
+import { SITE_NAME, SITE_TAGLINE } from "../lib/seo"
 
 interface Props {
   title?: string
   description?: string
+  /** Absolute or site-relative path for canonical URL, e.g. "/genesis/1" */
+  path?: string
+  /** Open Graph type */
+  ogType?: "website" | "article" | "book"
+  /** Optional JSON-LD objects (will be wrapped in @context) */
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[]
+  /** noindex rare utility pages */
+  noindex?: boolean
 }
 
 const {
-  title = "Новая учебная Женевская Библия",
-  description = "Синодальный текст с толкованиями, подзаголовками и перекрёстными ссылками.",
+  title = SITE_NAME,
+  description = SITE_TAGLINE,
+  path = Astro.url.pathname,
+  ogType = "website",
+  jsonLd,
+  noindex = false,
 } = Astro.props
+
+const canonical = new URL(path, Astro.site ?? Astro.url).href
+const fullTitle = title === SITE_NAME ? title : title
+const robots = noindex ? "noindex, nofollow" : "index, follow, max-image-preview:large"
+const ld = jsonLd
+  ? Array.isArray(jsonLd)
+    ? jsonLd.map((item) => ({ "@context": "https://schema.org", ...item }))
+    : { "@context": "https://schema.org", ...jsonLd }
+  : null
 ---
 
 <!doctype html>
@@ -17,11 +39,37 @@ const {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content={robots} />
+    <meta name="author" content="Новая учебная Женевская Библия" />
+    <meta name="theme-color" content="#0f1115" />
+
+    <link rel="canonical" href={canonical} />
+    <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
-    <meta name="generator" content={Astro.generator} />
-    <meta name="description" content={description} />
-    <title>{title}</title>
+
+    <!-- Open Graph -->
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+
+    {
+      ld && (
+        <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+      )
+    }
   </head>
   <body>
     <slot />
