@@ -1,5 +1,6 @@
 ---
 import "../styles/globals.css"
+import YandexMetrika from "../components/YandexMetrika.astro"
 import { SITE_NAME, SITE_TAGLINE } from "../lib/seo"
 
 interface Props {
@@ -73,5 +74,6 @@ const ld = jsonLd
   </head>
   <body>
     <slot />
+    <YandexMetrika />
   </body>
 </html>
