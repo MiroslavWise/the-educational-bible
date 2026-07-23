@@ -1,9 +1,16 @@
 ---
 import { getCollection } from "astro:content"
+import type { Thing } from "schema-dts"
 import Layout from "../../layouts/Layout.astro"
 import ChapterPage from "../../components/ChapterPage"
 import { chapterNav, getChapter } from "../../lib/bible"
-import { chapterDescription, chapterTitle } from "../../lib/seo"
+import {
+  OG_IMAGE_PATH,
+  absoluteUrl,
+  chapterDescription,
+  chapterKeywords,
+  chapterTitle,
+} from "../../lib/seo"
 
 export async function getStaticPaths() {
   const entries = await getCollection("books")
@@ -31,19 +38,26 @@ const description = chapterDescription(
   chapterNumber,
   chapter.verses.map((v) => v.text),
 )
+const keywords = chapterKeywords(data.name, chapterNumber)
+const pageUrl = absoluteUrl(path, Astro.site)
+const bookUrl = absoluteUrl(`/${data.slug}/`, Astro.site)
+const imageUrl = absoluteUrl(OG_IMAGE_PATH, Astro.site)
+const homeUrl = Astro.site?.href ?? "https://the-educational-bible.web.app/"
 
-const jsonLd = [
+const jsonLd: Thing[] = [
   {
-    "@type": "CreativeWork",
+    "@type": "Chapter",
     name: `${data.name}, глава ${chapterNumber}`,
     headline: `${data.name}. Глава ${chapterNumber}`,
-    url: new URL(path, Astro.site).href,
+    url: pageUrl,
     inLanguage: "ru",
     description,
+    keywords,
+    image: imageUrl,
     isPartOf: {
       "@type": "Book",
       name: data.fullName,
-      url: new URL(`/${data.slug}/`, Astro.site).href,
+      url: bookUrl,
     },
     hasPart: chapter.verses.slice(0, 5).map((v) => ({
       "@type": "CreativeWork",
@@ -58,19 +72,19 @@ const jsonLd = [
         "@type": "ListItem",
         position: 1,
         name: "Главная",
-        item: Astro.site?.href ?? "/",
+        item: homeUrl,
       },
       {
         "@type": "ListItem",
         position: 2,
         name: data.name,
-        item: new URL(`/${data.slug}/`, Astro.site).href,
+        item: bookUrl,
       },
       {
         "@type": "ListItem",
         position: 3,
         name: `Глава ${chapterNumber}`,
-        item: new URL(path, Astro.site).href,
+        item: pageUrl,
       },
     ],
   },
@@ -80,6 +94,7 @@ const jsonLd = [
 <Layout
   title={title}
   description={description}
+  keywords={keywords}
   path={path}
   ogType="article"
   jsonLd={jsonLd}

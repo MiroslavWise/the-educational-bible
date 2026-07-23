@@ -1,28 +1,75 @@
 ---
 import { getCollection } from "astro:content"
+import type { Thing } from "schema-dts"
 import Layout from "../layouts/Layout.astro"
 import HomePage from "../components/HomePage"
 import { sortBooks, toSummary } from "../lib/bible"
-import { SITE_NAME, SITE_TAGLINE } from "../lib/seo"
+import {
+  OG_IMAGE_ALT,
+  OG_IMAGE_HEIGHT,
+  OG_IMAGE_PATH,
+  OG_IMAGE_WIDTH,
+  SITE_KEYWORDS,
+  SITE_NAME,
+  SITE_TAGLINE,
+  absoluteUrl,
+} from "../lib/seo"
 
 const entries = await getCollection("books")
 const books = sortBooks(entries.map((e) => toSummary(e.data)))
 
-const jsonLd = [
+const siteUrl = Astro.site?.href ?? "https://the-educational-bible.web.app/"
+const imageUrl = absoluteUrl(OG_IMAGE_PATH, Astro.site)
+
+const imageObject = {
+  "@type": "ImageObject" as const,
+  url: imageUrl,
+  contentUrl: imageUrl,
+  width: String(OG_IMAGE_WIDTH),
+  height: String(OG_IMAGE_HEIGHT),
+  caption: OG_IMAGE_ALT,
+}
+
+const jsonLd: Thing[] = [
+  {
+    "@type": "Organization",
+    "@id": `${siteUrl}#organization`,
+    name: SITE_NAME,
+    url: siteUrl,
+    logo: imageObject,
+    image: imageObject,
+  },
   {
     "@type": "WebSite",
+    "@id": `${siteUrl}#website`,
     name: SITE_NAME,
     description: SITE_TAGLINE,
-    url: Astro.site?.href ?? "/",
+    url: siteUrl,
     inLanguage: "ru",
+    keywords: SITE_KEYWORDS,
+    publisher: { "@id": `${siteUrl}#organization` },
+    image: imageObject,
   },
   {
     "@type": "Book",
+    "@id": `${siteUrl}#book`,
     name: SITE_NAME,
     alternateName: "Geneva Study Bible",
+    url: siteUrl,
     inLanguage: "ru",
     bookFormat: "https://schema.org/EBook",
-    about: "Библия, синодальный перевод, толкования",
+    about: [
+      "Библия онлайн",
+      "почитать Библию",
+      "синодальный перевод",
+      "толкования",
+      "Женевская учебная Библия",
+    ],
+    keywords: SITE_KEYWORDS,
+    description: SITE_TAGLINE,
+    image: imageObject,
+    publisher: { "@id": `${siteUrl}#organization` },
+    isPartOf: { "@id": `${siteUrl}#website` },
   },
 ]
 ---
@@ -30,6 +77,7 @@ const jsonLd = [
 <Layout
   title={SITE_NAME}
   description={SITE_TAGLINE}
+  keywords={SITE_KEYWORDS}
   path="/"
   ogType="website"
   jsonLd={jsonLd}

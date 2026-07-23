@@ -1,7 +1,18 @@
 ---
+import { Schema } from "astro-seo-schema"
+import type { Thing, WithContext } from "schema-dts"
 import "../styles/globals.css"
 import YandexMetrika from "../components/YandexMetrika.astro"
-import { SITE_NAME, SITE_TAGLINE } from "../lib/seo"
+import {
+  OG_IMAGE_ALT,
+  OG_IMAGE_HEIGHT,
+  OG_IMAGE_PATH,
+  OG_IMAGE_WIDTH,
+  SITE_KEYWORDS,
+  SITE_NAME,
+  SITE_TAGLINE,
+  absoluteUrl,
+} from "../lib/seo"
 
 interface Props {
   title?: string
@@ -10,8 +21,13 @@ interface Props {
   path?: string
   /** Open Graph type */
   ogType?: "website" | "article" | "book"
-  /** Optional JSON-LD objects (will be wrapped in @context) */
-  jsonLd?: Record<string, unknown> | Record<string, unknown>[]
+  /** Optional JSON-LD objects (Schema wraps each with @context) */
+  jsonLd?: WithContext<Thing> | Thing | (WithContext<Thing> | Thing)[]
+  /** Override default OG image (site-relative or absolute URL) */
+  image?: string
+  imageAlt?: string
+  /** Page-level keywords (falls back to site-wide list) */
+  keywords?: string
   /** noindex rare utility pages */
   noindex?: boolean
 }
@@ -22,17 +38,23 @@ const {
   path = Astro.url.pathname,
   ogType = "website",
   jsonLd,
+  image = OG_IMAGE_PATH,
+  imageAlt = OG_IMAGE_ALT,
+  keywords = SITE_KEYWORDS,
   noindex = false,
 } = Astro.props
 
-const canonical = new URL(path, Astro.site ?? Astro.url).href
+const site = Astro.site ?? Astro.url
+const canonical = absoluteUrl(path, site)
 const fullTitle = title === SITE_NAME ? title : title
 const robots = noindex ? "noindex, nofollow" : "index, follow, max-image-preview:large"
-const ld = jsonLd
+const ogImage = absoluteUrl(image, site)
+
+const schemas: (WithContext<Thing> | Thing)[] = jsonLd
   ? Array.isArray(jsonLd)
-    ? jsonLd.map((item) => ({ "@context": "https://schema.org", ...item }))
-    : { "@context": "https://schema.org", ...jsonLd }
-  : null
+    ? jsonLd
+    : [jsonLd]
+  : []
 ---
 
 <!doctype html>
@@ -44,6 +66,7 @@ const ld = jsonLd
 
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    <meta name="keywords" content={keywords} />
     <meta name="robots" content={robots} />
     <meta name="author" content="Новая учебная Женевская Библия" />
     <meta name="yandex-verification" content="88e2d95f47eb1f20" />
@@ -54,6 +77,7 @@ const ld = jsonLd
     <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
+    <link rel="image_src" href={ogImage} />
 
     <!-- Open Graph -->
     <meta property="og:locale" content="ru_RU" />
@@ -62,16 +86,30 @@ const ld = jsonLd
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:secure_url" content={ogImage} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content={String(OG_IMAGE_WIDTH)} />
+    <meta property="og:image:height" content={String(OG_IMAGE_HEIGHT)} />
+    <meta property="og:image:alt" content={imageAlt} />
 
     <!-- Twitter -->
-    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={imageAlt} />
 
     {
-      ld && (
-        <script type="application/ld+json" set:html={JSON.stringify(ld)} />
-      )
+      schemas.map((item) => (
+        <Schema
+          item={
+            "@context" in item && item["@context"]
+              ? (item as WithContext<Thing>)
+              : ({ "@context": "https://schema.org", ...item } as WithContext<Thing>)
+          }
+        />
+      ))
     }
   </head>
   <body>
