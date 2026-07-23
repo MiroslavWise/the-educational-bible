@@ -16,6 +16,7 @@ jobs:
         env:
           SITE: ${{ vars.SITE }}
           YANDEX_METRIKA_ID: ${{ vars.YANDEX_METRIKA_ID }}
+          GOOGLE_TAG_MANAGER_ID: ${{ vars.GOOGLE_TAG_MANAGER_ID }}
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}

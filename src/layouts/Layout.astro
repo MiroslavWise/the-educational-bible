@@ -3,6 +3,7 @@ import { Schema } from "astro-seo-schema"
 import type { Thing, WithContext } from "schema-dts"
 import "../styles/globals.css"
 import YandexMetrika from "../components/YandexMetrika.astro"
+import GoogleTagManager from "../components/GoogleTagManager.astro"
 import {
   OG_IMAGE_ALT,
   OG_IMAGE_HEIGHT,
@@ -60,6 +61,7 @@ const schemas: (WithContext<Thing> | Thing)[] = jsonLd
 <!doctype html>
 <html lang="ru" data-astryx-theme="neutral">
   <head>
+    <GoogleTagManager placement="head" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
@@ -113,6 +115,7 @@ const schemas: (WithContext<Thing> | Thing)[] = jsonLd
     }
   </head>
   <body>
+    <GoogleTagManager placement="body" />
     <slot />
     <YandexMetrika />
   </body>
