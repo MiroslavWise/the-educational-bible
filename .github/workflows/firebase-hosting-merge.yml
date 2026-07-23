@@ -6,9 +6,6 @@ on:
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
-    env:
-      SITE: https://the-educational-bible.web.app/
-      YANDEX_METRIKA_ID: "110963125"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
