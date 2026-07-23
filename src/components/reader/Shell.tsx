@@ -3,7 +3,6 @@ import { Theme } from "@astryxdesign/core/theme"
 import { neutralTheme } from "@astryxdesign/theme-neutral"
 import { HStack } from "@astryxdesign/core/Layout"
 import { Button } from "@astryxdesign/core/Button"
-import { Link } from "@astryxdesign/core/Link"
 import { useColorMode } from "./useColorMode"
 
 interface ShellProps {
@@ -22,10 +21,7 @@ export function Shell({ children }: ShellProps) {
             <a className="tb-brand" href="/">
               📖 Женевская учебная Библия
             </a>
-            <HStack gap={2} vAlign="center">
-              <Link href="/genesis">Книги</Link>
-              <Button label={mode === "dark" ? "Светлая тема" : "Тёмная тема"} variant="ghost" size="sm" onClick={toggle} />
-            </HStack>
+            <Button label={mode === "dark" ? "Светлая тема" : "Тёмная тема"} variant="ghost" size="sm" onClick={toggle} />
           </HStack>
         </header>
         <main>{children}</main>
