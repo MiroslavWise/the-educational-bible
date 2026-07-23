@@ -4,8 +4,8 @@ export const prerender = true
 
 export const GET: APIRoute = ({ site }) => {
   const sitemap = site
-    ? new URL("sitemap-index.xml", site).href
-    : "/sitemap-index.xml"
+    ? new URL("sitemap.xml", site).href
+    : "/sitemap.xml"
 
   const body = [
     "User-agent: *",

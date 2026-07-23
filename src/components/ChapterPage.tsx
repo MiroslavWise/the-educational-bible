@@ -174,21 +174,16 @@ function ChapterPicker({ book, current }: { book: Props["book"]; current: number
     <Popover
       label="Выбрать главу"
       placement="below"
-      width={320}
+      width={280}
       hasCloseButton={false}
       content={
-        <div className="tb-chapter-grid" style={{ maxWidth: 300 }}>
+        <div className="tb-chapter-grid tb-chapter-grid--compact">
           {Array.from({ length: book.chaptersCount }, (_, i) => i + 1).map((n) => (
             <a
               key={n}
               className="tb-chapter-cell"
               href={`/${book.slug}/${n}`}
               aria-current={n === current ? "page" : undefined}
-              style={
-                n === current
-                  ? { borderColor: "var(--color-accent)", color: "var(--color-text-accent)" }
-                  : undefined
-              }
             >
               {n}
             </a>
@@ -196,10 +191,7 @@ function ChapterPicker({ book, current }: { book: Props["book"]; current: number
         </div>
       }
     >
-      <button
-        className="tb-chapter-cell"
-        style={{ width: "auto", aspectRatio: "auto", padding: "0 var(--spacing-3)", height: 32 }}
-      >
+      <button type="button" className="tb-chapter-cell tb-chapter-picker-trigger">
         Глава {current} ▾
       </button>
     </Popover>

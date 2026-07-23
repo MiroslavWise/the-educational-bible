@@ -22,6 +22,11 @@ body {
 
 .tb-app {
   min-height: 100vh;
+  font-family: var(--font-family-body);
+}
+
+.tb-app :is(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--font-family-code);
 }
 
 /* Sticky top bar */
@@ -65,28 +70,55 @@ body {
 /* ---------- Chapter number grid ---------- */
 .tb-chapter-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
-  gap: var(--spacing-2);
+  grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
+  gap: var(--spacing-1);
+}
+
+.tb-chapter-grid--compact {
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: var(--spacing-1);
+  max-width: 280px;
 }
 
 .tb-chapter-cell {
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 32px;
   aspect-ratio: 1 / 1;
   border-radius: var(--radius-element);
   border: var(--border-width) solid var(--color-border);
   background: var(--color-background-card);
   color: var(--color-text-primary);
   text-decoration: none;
+  font-family: var(--font-family-code);
+  font-size: var(--font-size-sm);
   font-weight: 600;
-  transition: background 0.12s ease, border-color 0.12s ease, transform 0.12s ease;
+  font-feature-settings: "tnum";
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+
+.tb-chapter-grid--compact .tb-chapter-cell {
+  min-height: 28px;
+  font-size: var(--font-size-xs);
+}
+
+.tb-chapter-picker-trigger {
+  width: auto;
+  aspect-ratio: auto;
+  min-height: 28px;
+  padding: 0 var(--spacing-2);
+  white-space: nowrap;
 }
 
 .tb-chapter-cell:hover {
   background: var(--color-overlay-hover);
   border-color: var(--color-border-emphasized);
-  transform: translateY(-1px);
+}
+
+.tb-chapter-cell[aria-current="page"] {
+  border-color: var(--color-accent);
+  color: var(--color-text-accent);
 }
 
 /* ---------- Reader ---------- */
