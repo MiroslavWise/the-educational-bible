@@ -36,7 +36,7 @@ const ld = jsonLd
 ---
 
 <!doctype html>
-<html lang="ru">
+<html lang="ru" data-astryx-theme="neutral">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -46,7 +46,8 @@ const ld = jsonLd
     <meta name="description" content={description} />
     <meta name="robots" content={robots} />
     <meta name="author" content="Новая учебная Женевская Библия" />
-    <meta name="theme-color" content="#0f1115" />
+    <meta name="theme-color" content="#f1f1f1" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1b1b1b" media="(prefers-color-scheme: dark)" />
 
     <link rel="canonical" href={canonical} />
     <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />

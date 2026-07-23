@@ -2,6 +2,11 @@
 @import "@astryxdesign/core/astryx.css";
 @import "@astryxdesign/theme-neutral/theme.css";
 
+/* Follow OS light/dark preference — tokens use light-dark() from theme.css */
+html {
+  color-scheme: light dark;
+}
+
 /* ------------------------------------------------------------------ *
  * The Educational Bible — reader styles.
  * Only Astryx design tokens are used (colors auto-switch light/dark).
