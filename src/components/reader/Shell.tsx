@@ -3,6 +3,7 @@ import { Theme } from "@astryxdesign/core/theme"
 import { neutralTheme } from "@astryxdesign/theme-neutral"
 import { HStack } from "@astryxdesign/core/Layout"
 import { Button } from "@astryxdesign/core/Button"
+
 import { useColorMode } from "./useColorMode"
 
 interface ShellProps {
