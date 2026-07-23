@@ -158,6 +158,12 @@ body {
   width: 100%;
 }
 
+@media (min-width: 1024px) {
+  .tb-scripture {
+    max-width: 82ch;
+  }
+}
+
 .tb-verses {
   font-size: 1.18rem;
   line-height: 1.75;
@@ -198,11 +204,14 @@ body {
   box-shadow: 0 0 0 6px var(--color-accent-muted);
 }
 
-/* Number + superscript marks (∗ / ⌖) at the top-right of the verse digit */
+/* Number + marks: digit slightly indented; ∗ / ⌖ absolute top-left */
 .tb-verse-ref {
+  position: relative;
   display: inline-flex;
   align-items: flex-start;
+  margin-inline-start: 0.65em;
   margin-inline-end: 0.4em;
+  padding-inline-start: 0.2em;
   vertical-align: super;
   line-height: 1;
 }
@@ -210,17 +219,20 @@ body {
 .tb-verse-num {
   font-size: 0.78em;
   font-weight: 700;
-  color: var(--color-text-accent);
+  /* light: тёплый жёлто-оранжевый; dark: мягкий кремово-жёлтый */
+  color: light-dark(#c96a12, #e8d48a);
   font-feature-settings: "tnum";
   line-height: 1;
 }
 
 .tb-verse-marks {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate(-100%, -30%);
   display: inline-flex;
   align-items: center;
   gap: 0.05em;
-  margin-top: -0.2em;
-  margin-left: 0.02em;
   font-size: 0.72em;
   line-height: 1;
   font-weight: 700;
