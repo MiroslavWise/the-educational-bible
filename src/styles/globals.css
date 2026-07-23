@@ -219,7 +219,6 @@ body {
 .tb-verse-num {
   font-size: 0.78em;
   font-weight: 700;
-  /* light: тёплый жёлто-оранжевый; dark: мягкий кремово-жёлтый */
   color: light-dark(#c96a12, #e8d48a);
   font-feature-settings: "tnum";
   line-height: 1;
@@ -236,6 +235,8 @@ body {
   font-size: 0.72em;
   line-height: 1;
   font-weight: 700;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .tb-star,
@@ -247,6 +248,8 @@ body {
   font: inherit;
   line-height: 1;
   border-radius: var(--radius-inner);
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .tb-star {

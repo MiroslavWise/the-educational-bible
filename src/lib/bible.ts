@@ -89,7 +89,13 @@ export function groupByTestament(books: BookSummary[]): Record<Testament, BookSu
 }
 
 export function getChapter(book: Book, n: number): Chapter | undefined {
-  return book.chapters.find((c) => c.number === n)
+  const chapter = book.chapters.find((c) => c.number === n)
+  if (!chapter) return undefined
+  // Drop parse artefacts (e.g. dumped articles as "verse 0")
+  return {
+    ...chapter,
+    verses: chapter.verses.filter((v) => v.number >= 1),
+  }
 }
 
 export interface ChapterNav {
