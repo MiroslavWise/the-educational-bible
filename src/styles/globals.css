@@ -469,7 +469,7 @@ body {
   justify-content: center;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .tb-verses {
     font-size: 1.08rem;
     line-height: 1.7;
