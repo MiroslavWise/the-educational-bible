@@ -1,0 +1,226 @@
+---
+import { TESTAMENT_LABEL, type Prose, type Testament } from "../lib/bible"
+import {
+  type BookVideo,
+  getLukeActsPlaylistUrl,
+  getPlaylistUrl,
+  youtubeEmbedUrl,
+  youtubeThumbUrl,
+} from "../lib/videos"
+
+interface Props {
+  book: {
+    slug: string
+    name: string
+    fullName: string
+    testament: Testament
+    chaptersCount: number
+    introduction: Prose[]
+    articles: Prose[]
+  }
+  videos?: BookVideo[]
+}
+
+const { book, videos = [] } = Astro.props
+const chapters = Array.from({ length: book.chaptersCount }, (_, i) => i + 1)
+const playlistUrl = getPlaylistUrl(book.testament)
+const lukeActsUrl =
+  book.slug === "luke" || book.slug === "acts" ? getLukeActsPlaylistUrl() : null
+const firstVideo = videos[0]
+---
+
+<div class="tb-page">
+  <div class="tb-stack tb-stack--6">
+    <nav class="tb-breadcrumbs" aria-label="Навигация">
+      <a href="/">Главная</a>
+      <span class="tb-breadcrumbs-sep" aria-hidden="true">/</span>
+      <span aria-current="page">{book.name}</span>
+    </nav>
+
+    <header class="tb-stack tb-stack--2">
+      <h1>{book.fullName}</h1>
+      <div class="tb-meta-row">
+        <span class="tb-badge tb-badge--blue">{TESTAMENT_LABEL[book.testament]}</span>
+        <span class="tb-muted">{book.chaptersCount} глав</span>
+      </div>
+    </header>
+
+    <section class="tb-stack tb-stack--4" aria-labelledby="chapters-heading">
+      <h2 id="chapters-heading">Главы</h2>
+      <div class="tb-chapter-grid">
+        {
+          chapters.map((n) => (
+            <a class="tb-chapter-cell" href={`/${book.slug}/${n}`}>
+              {n}
+            </a>
+          ))
+        }
+      </div>
+    </section>
+
+    {
+      firstVideo && (
+        <>
+          <hr class="tb-divider" />
+          <section
+            class="tb-stack tb-stack--4"
+            aria-labelledby="videos-heading"
+            data-videos
+          >
+            <div class="tb-meta-row">
+              <h2 id="videos-heading">Видео</h2>
+              <span class="tb-badge">{videos.length}</span>
+            </div>
+
+            <div class="tb-video-embed">
+              <iframe
+                data-video-frame
+                src={youtubeEmbedUrl(firstVideo.id)}
+                title={firstVideo.title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+                loading="lazy"
+                referrerpolicy="strict-origin-when-cross-origin"
+              />
+            </div>
+
+            <p class="tb-muted" data-video-title>
+              {firstVideo.title}
+            </p>
+
+            {
+              videos.length > 1 && (
+                <div class="tb-video-switcher" role="tablist" aria-label="Выбор видео">
+                  {videos.map((video, i) => (
+                    <button
+                      type="button"
+                      role="tab"
+                      class="tb-video-switcher-item"
+                      data-video-id={video.id}
+                      data-video-title={video.title}
+                      data-active={i === 0 ? "true" : undefined}
+                      aria-selected={i === 0 ? "true" : "false"}
+                    >
+                      <img
+                        src={youtubeThumbUrl(video.id)}
+                        alt=""
+                        width="120"
+                        height="68"
+                        loading="lazy"
+                      />
+                      <span class="tb-video-switcher-title">{video.title}</span>
+                    </button>
+                  ))}
+                </div>
+              )
+            }
+
+            <p class="tb-muted">
+              Обзоры{" "}
+              <a href={playlistUrl} target="_blank" rel="noopener noreferrer">
+                BibleProject
+              </a>
+              {lukeActsUrl && (
+                <>
+                  {" · "}
+                  <a href={lukeActsUrl} target="_blank" rel="noopener noreferrer">
+                    серия «Лука–Деяния»
+                  </a>
+                </>
+              )}
+            </p>
+          </section>
+        </>
+      )
+    }
+
+    {
+      book.introduction.length > 0 && (
+        <>
+          <hr class="tb-divider" />
+          <section class="tb-stack tb-stack--4" aria-labelledby="intro-heading">
+            <h2 id="intro-heading">Введение</h2>
+            <div class="tb-stack tb-stack--3">
+              {book.introduction.map((s, i) => (
+                <details open={i === 0}>
+                  <summary>
+                    <strong>{s.heading || s.title || "Раздел"}</strong>
+                  </summary>
+                  <div class="tb-prose">
+                    {s.paragraphs.map((p) => (
+                      <p>{p}</p>
+                    ))}
+                  </div>
+                </details>
+              ))}
+            </div>
+          </section>
+        </>
+      )
+    }
+
+    {
+      book.articles.length > 0 && (
+        <>
+          <hr class="tb-divider" />
+          <section class="tb-stack tb-stack--4" aria-labelledby="articles-heading">
+            <div class="tb-meta-row">
+              <h2 id="articles-heading">Тематические статьи</h2>
+              <span class="tb-badge tb-badge--purple">{book.articles.length}</span>
+            </div>
+            <div class="tb-stack tb-stack--3">
+              {book.articles.map((s, i) => (
+                <details open={i === 0}>
+                  <summary>
+                    <strong>{s.heading || s.title || "Раздел"}</strong>
+                  </summary>
+                  <div class="tb-prose">
+                    {s.paragraphs.map((p) => (
+                      <p>{p}</p>
+                    ))}
+                  </div>
+                </details>
+              ))}
+            </div>
+          </section>
+        </>
+      )
+    }
+  </div>
+</div>
+
+{
+  videos.length > 1 && (
+    <script>
+      const embedBase = "https://www.youtube-nocookie.com/embed/"
+
+      function initVideos(root: HTMLElement) {
+        const frame = root.querySelector<HTMLIFrameElement>("[data-video-frame]")
+        const titleEl = root.querySelector<HTMLElement>("[data-video-title]")
+        const buttons = root.querySelectorAll<HTMLButtonElement>("[data-video-id]")
+        if (!frame || !titleEl || buttons.length === 0) return
+
+        buttons.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const id = btn.dataset.videoId
+            const title = btn.dataset.videoTitle
+            if (!id || !title) return
+
+            frame.src = `${embedBase}${id}`
+            frame.title = title
+            titleEl.textContent = title
+
+            buttons.forEach((other) => {
+              const active = other === btn
+              if (active) other.dataset.active = "true"
+              else delete other.dataset.active
+              other.setAttribute("aria-selected", active ? "true" : "false")
+            })
+          })
+        })
+      }
+
+      document.querySelectorAll<HTMLElement>("[data-videos]").forEach(initVideos)
+    </script>
+  )
+}

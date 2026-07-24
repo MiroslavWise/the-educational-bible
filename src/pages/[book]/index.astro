@@ -2,7 +2,7 @@
 import { getCollection } from "astro:content"
 import type { Thing } from "schema-dts"
 import Layout from "../../layouts/Layout.astro"
-import BookPage from "../../components/BookPage"
+import BookPage from "../../components/BookPage.astro"
 import {
   OG_IMAGE_PATH,
   SITE_NAME,
@@ -113,5 +113,5 @@ if (firstVideo) {
   ogType="book"
   jsonLd={jsonLd}
 >
-  <BookPage client:load book={book} videos={videos} />
+  <BookPage book={book} videos={videos} />
 </Layout>

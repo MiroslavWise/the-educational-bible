@@ -2,7 +2,7 @@
 import { getCollection } from "astro:content"
 import type { Thing } from "schema-dts"
 import Layout from "../../layouts/Layout.astro"
-import ChapterPage from "../../components/ChapterPage"
+import ChapterPage from "../../components/ChapterPage.astro"
 import { chapterNav, getChapter } from "../../lib/bible"
 import {
   OG_IMAGE_PATH,
@@ -99,5 +99,5 @@ const jsonLd: Thing[] = [
   ogType="article"
   jsonLd={jsonLd}
 >
-  <ChapterPage client:load book={book} chapter={chapter} nav={nav} />
+  <ChapterPage book={book} chapter={chapter} nav={nav} />
 </Layout>

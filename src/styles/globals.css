@@ -221,6 +221,7 @@ body {
   font-size: 1.18rem;
   line-height: 1.75;
   color: var(--color-text-primary);
+  margin-top: var(--spacing-5);
 }
 
 .tb-verse {
@@ -329,6 +330,9 @@ body {
   display: block;
   margin-top: var(--spacing-7);
   margin-bottom: var(--spacing-2);
+  color: var(--color-text-accent);
+  font-size: var(--font-size-lg, 1.125rem);
+  font-weight: 600;
 }
 
 /* Comments aside */
@@ -383,6 +387,239 @@ body {
   line-height: 1.8;
   color: var(--color-text-secondary);
   margin: 0 0 var(--spacing-3);
+}
+
+.tb-label {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.tb-reader-toolbar-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+}
+
+.tb-chapter-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.tb-chapter-nav-footer {
+  padding-block: var(--spacing-4);
+}
+
+.tb-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  padding: 0 var(--spacing-3);
+  border-radius: var(--radius-element);
+  border: var(--border-width) solid var(--color-border);
+  background: var(--color-background-card);
+  color: var(--color-text-primary);
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.tb-nav-btn:hover {
+  background: var(--color-overlay-hover);
+  border-color: var(--color-border-emphasized);
+}
+
+.tb-nav-btn--disabled {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.tb-chapter-picker {
+  position: relative;
+}
+
+.tb-chapter-picker > summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+.tb-chapter-picker > summary::-webkit-details-marker {
+  display: none;
+}
+
+.tb-chapter-picker-panel {
+  position: absolute;
+  top: calc(100% + var(--spacing-2));
+  right: 0;
+  z-index: 30;
+  width: 280px;
+  max-width: min(280px, calc(100vw - var(--spacing-8)));
+  padding: var(--spacing-3);
+  border-radius: var(--radius-element);
+  border: var(--border-width) solid var(--color-border);
+  background: var(--color-background-surface);
+  box-shadow: var(--shadow-raised, 0 8px 24px color-mix(in srgb, var(--color-text-primary) 18%, transparent));
+}
+
+.tb-float-panel {
+  margin: 0;
+  padding: var(--spacing-4);
+  max-width: min(360px, calc(100vw - var(--spacing-8)));
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-element);
+  background: var(--color-background-surface);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-raised, 0 8px 24px color-mix(in srgb, var(--color-text-primary) 18%, transparent));
+}
+
+.tb-float-panel--sm {
+  max-width: min(240px, calc(100vw - var(--spacing-8)));
+}
+
+.tb-float-panel p {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: 1.55;
+  color: var(--color-text-secondary);
+}
+
+.tb-scripture > h1 {
+  margin: 0;
+}
+
+/* Book page layout helpers (server-rendered Astro) */
+.tb-stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.tb-stack--1 {
+  gap: var(--spacing-1);
+}
+
+.tb-stack--2 {
+  gap: var(--spacing-2);
+}
+
+.tb-stack--3 {
+  gap: var(--spacing-3);
+}
+
+.tb-stack--4 {
+  gap: var(--spacing-4);
+}
+
+.tb-stack--6 {
+  gap: var(--spacing-6);
+}
+
+.tb-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.tb-breadcrumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.tb-breadcrumbs a {
+  color: var(--color-text-secondary);
+  text-decoration: none;
+}
+
+.tb-breadcrumbs a:hover {
+  color: var(--color-text-primary);
+  text-decoration: underline;
+}
+
+.tb-breadcrumbs [aria-current="page"] {
+  color: var(--color-text-primary);
+}
+
+.tb-breadcrumbs-sep {
+  opacity: 0.55;
+}
+
+.tb-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--radius-full, 999px);
+  border: var(--border-width) solid var(--color-border);
+  background: var(--color-background-muted);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.tb-badge--blue {
+  color: var(--color-text-accent);
+  border-color: color-mix(in srgb, var(--color-accent) 35%, var(--color-border));
+  background: color-mix(in srgb, var(--color-accent) 12%, var(--color-background-muted));
+}
+
+.tb-badge--purple {
+  color: var(--color-text-primary);
+  border-color: color-mix(in srgb, var(--color-accent) 25%, var(--color-border));
+  background: color-mix(in srgb, var(--color-accent) 8%, var(--color-background-muted));
+}
+
+.tb-divider {
+  width: 100%;
+  margin: 0;
+  border: 0;
+  border-top: var(--border-width) solid var(--color-border);
+}
+
+.tb-page details {
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-element);
+  background: var(--color-background-card);
+  padding: var(--spacing-3) var(--spacing-4);
+}
+
+.tb-page details summary {
+  cursor: pointer;
+  list-style: none;
+  color: var(--color-text-primary);
+}
+
+.tb-page details summary::-webkit-details-marker {
+  display: none;
+}
+
+.tb-page details summary::before {
+  content: "▶";
+  display: inline-block;
+  margin-inline-end: var(--spacing-2);
+  font-size: 0.7em;
+  color: var(--color-text-secondary);
+  transition: transform 0.12s ease;
+}
+
+.tb-page details[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.tb-page details .tb-prose {
+  margin-top: var(--spacing-3);
 }
 
 /* Book videos (BibleProject embeds) */

@@ -1,0 +1,277 @@
+---
+import {
+  commentsForVerse,
+  type Chapter,
+  type ChapterNav,
+  type Comment,
+} from "../lib/bible"
+
+interface Props {
+  book: { slug: string; name: string; chaptersCount: number }
+  chapter: Chapter
+  nav: ChapterNav
+}
+
+const { book, chapter, nav } = Astro.props
+const chapters = Array.from({ length: book.chaptersCount }, (_, i) => i + 1)
+
+function rangeLabel(c: Comment): string {
+  return c.verseStart === c.verseEnd
+    ? `ст. ${c.verseStart}`
+    : `ст. ${c.verseStart}–${c.verseEnd}`
+}
+---
+
+<div class="tb-reader">
+  <div class="tb-reader-toolbar">
+    <div class="tb-reader-toolbar-row">
+      <nav class="tb-breadcrumbs" aria-label="Навигация">
+        <a href="/">Главная</a>
+        <span class="tb-breadcrumbs-sep" aria-hidden="true">/</span>
+        <a href={`/${book.slug}`}>{book.name}</a>
+        <span class="tb-breadcrumbs-sep" aria-hidden="true">/</span>
+        <span aria-current="page">Глава {chapter.number}</span>
+      </nav>
+
+      <nav class="tb-chapter-nav" aria-label="Переход по главам">
+        {
+          nav.prev !== null ? (
+            <a class="tb-nav-btn" href={`/${book.slug}/${nav.prev}`}>
+              ← Пред.
+            </a>
+          ) : (
+            <span class="tb-nav-btn tb-nav-btn--disabled" aria-disabled="true">← Пред.</span>
+          )
+        }
+
+        <details class="tb-chapter-picker">
+          <summary class="tb-chapter-cell tb-chapter-picker-trigger">
+            Глава {chapter.number} ▾
+          </summary>
+          <div class="tb-chapter-picker-panel">
+            <div class="tb-chapter-grid tb-chapter-grid--compact">
+              {
+                chapters.map((n) => (
+                  <a
+                    class="tb-chapter-cell"
+                    href={`/${book.slug}/${n}`}
+                    aria-current={n === chapter.number ? "page" : undefined}
+                  >
+                    {n}
+                  </a>
+                ))
+              }
+            </div>
+          </div>
+        </details>
+
+        {
+          nav.next !== null ? (
+            <a class="tb-nav-btn" href={`/${book.slug}/${nav.next}`}>
+              След. →
+            </a>
+          ) : (
+            <span class="tb-nav-btn tb-nav-btn--disabled" aria-disabled="true">След. →</span>
+          )
+        }
+      </nav>
+    </div>
+  </div>
+
+  <div class="tb-reader-grid">
+    <article class="tb-scripture">
+      <h1>{book.name}. Глава {chapter.number}</h1>
+
+      <div class="tb-verses">
+        {
+          chapter.verses.map((verse) => {
+            const comments = verse.hasComment
+              ? commentsForVerse(chapter, verse.number)
+              : []
+            const hasComment = verse.hasComment && comments.length > 0
+            const hasXref = Boolean(verse.crossRefs && verse.crossRefs.length > 0)
+            const commentId = `comment-v${verse.number}`
+            const xrefId = `xref-v${verse.number}`
+
+            return (
+              <>
+                {verse.subheading && (
+                  <h3 class="tb-subheading">{verse.subheading}</h3>
+                )}
+
+                {hasComment ? (
+                  <button
+                    type="button"
+                    class="tb-verse tb-verse--has-comment"
+                    id={`v${verse.number}`}
+                    popovertarget={commentId}
+                    aria-label={`Стих ${verse.number}. Открыть толкование`}
+                  >
+                    <span class="tb-verse-ref">
+                      <span class="tb-verse-num">{verse.number}</span>
+                      <sup class="tb-verse-marks">
+                        <span class="tb-star" aria-hidden="true">
+                          ∗
+                        </span>
+                        {hasXref && (
+                          <span class="tb-xref" aria-hidden="true">
+                            ⌖
+                          </span>
+                        )}
+                      </sup>
+                    </span>
+                    {verse.text}
+                  </button>
+                ) : (
+                  <p class="tb-verse" id={`v${verse.number}`}>
+                    <span class="tb-verse-ref">
+                      <span class="tb-verse-num">{verse.number}</span>
+                      {hasXref && (
+                        <sup class="tb-verse-marks">
+                          <button
+                            type="button"
+                            class="tb-xref"
+                            popovertarget={xrefId}
+                            aria-label={`Параллельные места к стиху ${verse.number}`}
+                          >
+                            ⌖
+                          </button>
+                        </sup>
+                      )}
+                    </span>
+                    {verse.text}
+                  </p>
+                )}
+
+                {hasComment && (
+                  <div
+                    id={commentId}
+                    popover="auto"
+                    class="tb-float-panel"
+                    data-verse-trigger={`v${verse.number}`}
+                  >
+                    <div class="tb-popover-comments">
+                      <div class="tb-stack tb-stack--3">
+                        {comments.map((c, i) => (
+                          <>
+                            {i > 0 && <hr class="tb-divider" />}
+                            <div class="tb-stack tb-stack--1">
+                              <div class="tb-meta-row">
+                                <span class="tb-badge tb-badge--blue">{c.key}</span>
+                                <span class="tb-muted">{rangeLabel(c)}</span>
+                              </div>
+                              <div class="tb-stack tb-stack--1">
+                                {c.entries.map((e) => (
+                                  <p>
+                                    {e.lemma && (
+                                      <span class="tb-lemma">{e.lemma}. </span>
+                                    )}
+                                    {e.body}
+                                  </p>
+                                ))}
+                              </div>
+                            </div>
+                          </>
+                        ))}
+                        {hasXref && (
+                          <>
+                            <hr class="tb-divider" />
+                            <div class="tb-stack tb-stack--1">
+                              <span class="tb-label">Параллельные места</span>
+                              {verse.crossRefs!.map((r) => (
+                                <p class="tb-muted">{r.ref}</p>
+                              ))}
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {!hasComment && hasXref && (
+                  <div
+                    id={xrefId}
+                    popover="auto"
+                    class="tb-float-panel tb-float-panel--sm"
+                  >
+                    <div class="tb-stack tb-stack--1">
+                      <span class="tb-label">Параллельные места</span>
+                      {verse.crossRefs!.map((r) => (
+                        <p class="tb-muted">{r.ref}</p>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            )
+          })
+        }
+      </div>
+
+      <hr class="tb-divider" />
+      <div class="tb-center tb-chapter-nav-footer">
+        <nav class="tb-chapter-nav" aria-label="Переход по главам (низ страницы)">
+          {
+            nav.prev !== null ? (
+              <a class="tb-nav-btn" href={`/${book.slug}/${nav.prev}`}>
+                ← Пред.
+              </a>
+            ) : (
+              <span class="tb-nav-btn tb-nav-btn--disabled" aria-disabled="true">
+                ← Пред.
+              </span>
+            )
+          }
+
+          <details class="tb-chapter-picker">
+            <summary class="tb-chapter-cell tb-chapter-picker-trigger">
+              Глава {chapter.number} ▾
+            </summary>
+            <div class="tb-chapter-picker-panel">
+              <div class="tb-chapter-grid tb-chapter-grid--compact">
+                {
+                  chapters.map((n) => (
+                    <a
+                      class="tb-chapter-cell"
+                      href={`/${book.slug}/${n}`}
+                      aria-current={n === chapter.number ? "page" : undefined}
+                    >
+                      {n}
+                    </a>
+                  ))
+                }
+              </div>
+            </div>
+          </details>
+
+          {
+            nav.next !== null ? (
+              <a class="tb-nav-btn" href={`/${book.slug}/${nav.next}`}>
+                След. →
+              </a>
+            ) : (
+              <span class="tb-nav-btn tb-nav-btn--disabled" aria-disabled="true">
+                След. →
+              </span>
+            )
+          }
+        </nav>
+      </div>
+    </article>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>(".tb-float-panel[data-verse-trigger]").forEach((panel) => {
+    const verseId = panel.dataset.verseTrigger
+    if (!verseId) return
+    const verse = document.getElementById(verseId)
+    if (!verse) return
+
+    panel.addEventListener("toggle", () => {
+      if (panel.matches(":popover-open")) verse.setAttribute("data-active", "true")
+      else verse.removeAttribute("data-active")
+    })
+  })
+</script>
