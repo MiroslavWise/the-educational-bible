@@ -114,10 +114,174 @@ body {
   text-align: center;
 }
 
+.tb-hero .tb-stack {
+  align-items: center;
+}
+
+.tb-hero-title {
+  margin: 0;
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.tb-hero-lead {
+  margin: 0;
+  max-width: 42rem;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
 .tb-book-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: var(--spacing-4);
+}
+
+/* Thematic book section colors (palette from study-Bible UI) */
+:root {
+  --tb-section-law: light-dark(#6b5cae, #c4b5fd);
+  --tb-section-history: light-dark(#9a6b45, #e0b089);
+  --tb-section-wisdom: light-dark(#3d8f5a, #86c994);
+  --tb-section-major-prophets: light-dark(#b0447a, #f0a0c4);
+  --tb-section-minor-prophets: light-dark(#9a8618, #f0e06a);
+  --tb-section-gospels: light-dark(#c45f20, #ff9a5c);
+  --tb-section-acts: light-dark(#1a8fa0, #5ed4e4);
+  --tb-section-pauline: light-dark(#8a9218, #d4de5c);
+  --tb-section-general-epistles: light-dark(#2f9a3a, #6ee06a);
+  --tb-section-revelation: light-dark(#c24a5c, #f08090);
+}
+
+.tb-section-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2) var(--spacing-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tb-section-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.tb-section-swatch {
+  width: 0.7em;
+  height: 0.7em;
+  border-radius: 999px;
+  background: var(--tb-section-color);
+  flex-shrink: 0;
+}
+
+.tb-book-card,
+.tb-section-legend-item,
+.tb-book-accent,
+.tb-badge--section {
+  --tb-section-color: var(--color-text-secondary);
+}
+
+[data-section="law"] {
+  --tb-section-color: var(--tb-section-law);
+}
+
+[data-section="history"] {
+  --tb-section-color: var(--tb-section-history);
+}
+
+[data-section="wisdom"] {
+  --tb-section-color: var(--tb-section-wisdom);
+}
+
+[data-section="major-prophets"] {
+  --tb-section-color: var(--tb-section-major-prophets);
+}
+
+[data-section="minor-prophets"] {
+  --tb-section-color: var(--tb-section-minor-prophets);
+}
+
+[data-section="gospels"] {
+  --tb-section-color: var(--tb-section-gospels);
+}
+
+[data-section="acts"] {
+  --tb-section-color: var(--tb-section-acts);
+}
+
+[data-section="pauline"] {
+  --tb-section-color: var(--tb-section-pauline);
+}
+
+[data-section="general-epistles"] {
+  --tb-section-color: var(--tb-section-general-epistles);
+}
+
+[data-section="revelation"] {
+  --tb-section-color: var(--tb-section-revelation);
+}
+
+.tb-book-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  padding: var(--spacing-5);
+  border-radius: var(--radius-element);
+  border: var(--border-width) solid var(--color-border);
+  border-inline-start-width: 3px;
+  border-inline-start-color: var(--tb-section-color);
+  background: var(--color-background-card);
+  color: inherit;
+  text-decoration: none;
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+
+.tb-book-card:hover {
+  background: var(--color-overlay-hover);
+  border-color: var(--color-border-emphasized);
+  border-inline-start-color: var(--tb-section-color);
+}
+
+.tb-book-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-2);
+}
+
+.tb-book-card-name {
+  font-family: var(--font-family-code);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--tb-section-color);
+  line-height: 1.25;
+}
+
+.tb-book-card-full {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+
+.tb-book-card-section {
+  font-size: var(--font-size-xs);
+  color: var(--tb-section-color);
+  opacity: 0.85;
+}
+
+.tb-book-accent {
+  color: var(--tb-section-color);
+}
+
+.tb-badge--section {
+  color: var(--tb-section-color);
+  border-color: color-mix(in srgb, var(--tb-section-color) 40%, var(--color-border));
+  background: color-mix(in srgb, var(--tb-section-color) 14%, var(--color-background-muted));
 }
 
 /* ---------- Chapter number grid ---------- */
@@ -522,6 +686,10 @@ body {
   gap: var(--spacing-6);
 }
 
+.tb-stack--8 {
+  gap: var(--spacing-8);
+}
+
 .tb-meta-row {
   display: flex;
   flex-wrap: wrap;
@@ -546,6 +714,15 @@ body {
 .tb-breadcrumbs a:hover {
   color: var(--color-text-primary);
   text-decoration: underline;
+}
+
+.tb-breadcrumbs a.tb-book-accent {
+  color: var(--tb-section-color);
+}
+
+.tb-breadcrumbs a.tb-book-accent:hover {
+  color: var(--tb-section-color);
+  filter: brightness(1.1);
 }
 
 .tb-breadcrumbs [aria-current="page"] {

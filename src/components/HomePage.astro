@@ -1,0 +1,85 @@
+---
+import {
+  type BookSummary,
+  TESTAMENT_LABEL,
+  groupByTestament,
+  type Testament,
+} from "../lib/bible"
+import { BOOK_SECTIONS, getBookSection, getBookSectionMeta } from "../lib/book-sections"
+
+interface Props {
+  books: BookSummary[]
+}
+
+const { books } = Astro.props
+const grouped = groupByTestament(books)
+const otLegend = BOOK_SECTIONS.filter((s) => s.testament === "ot")
+const ntLegend = BOOK_SECTIONS.filter((s) => s.testament === "nt")
+---
+
+<section class="tb-hero">
+  <div class="tb-stack tb-stack--4">
+    <h1 class="tb-hero-title">Новая учебная Женевская Библия</h1>
+    <p class="tb-hero-lead">
+      Синодальный текст с подробными толкованиями, подзаголовками разделов и перекрёстными
+      ссылками. Стихи, к которым есть комментарий, отмечены звёздочкой&nbsp;<span
+        class="tb-star"
+        aria-hidden="true">∗</span
+      >.
+    </p>
+  </div>
+</section>
+
+<div class="tb-page">
+  <div class="tb-stack tb-stack--8">
+    {
+      (["ot", "nt"] as Testament[]).map((testament) => {
+        const list = grouped[testament]
+        const legend = testament === "ot" ? otLegend : ntLegend
+        return (
+          <section class="tb-stack tb-stack--4" aria-labelledby={`testament-${testament}`}>
+            <div class="tb-meta-row">
+              <h2 id={`testament-${testament}`}>{TESTAMENT_LABEL[testament]}</h2>
+              <span class="tb-badge">{list.length}</span>
+            </div>
+
+            <ul class="tb-section-legend" aria-label="Цвета разделов">
+              {legend.map((s) => (
+                <li class="tb-section-legend-item" data-section={s.id}>
+                  <span class="tb-section-swatch" aria-hidden="true" />
+                  {s.label}
+                </li>
+              ))}
+            </ul>
+
+            {list.length > 0 ? (
+              <div class="tb-book-grid">
+                {list.map((book) => {
+                  const section = getBookSection(book.slug)
+                  const meta = getBookSectionMeta(book.slug)
+                  return (
+                    <a
+                      class="tb-book-card"
+                      href={`/${book.slug}`}
+                      data-section={section}
+                      aria-label={`Открыть книгу «${book.name}»`}
+                    >
+                      <span class="tb-book-card-top">
+                        <span class="tb-book-card-name">{book.name}</span>
+                        <span class="tb-badge">{book.chaptersCount} гл.</span>
+                      </span>
+                      <span class="tb-book-card-full">{book.fullName}</span>
+                      <span class="tb-book-card-section">{meta.label}</span>
+                    </a>
+                  )
+                })}
+              </div>
+            ) : (
+              <p class="tb-muted">Скоро будет добавлено.</p>
+            )}
+          </section>
+        )
+      })
+    }
+  </div>
+</div>

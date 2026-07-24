@@ -2,7 +2,7 @@
 import { getCollection } from "astro:content"
 import type { Thing } from "schema-dts"
 import Layout from "../layouts/Layout.astro"
-import HomePage from "../components/HomePage"
+import HomePage from "../components/HomePage.astro"
 import { sortBooks, toSummary } from "../lib/bible"
 import {
   OG_IMAGE_ALT,
@@ -82,5 +82,5 @@ const jsonLd: Thing[] = [
   ogType="website"
   jsonLd={jsonLd}
 >
-  <HomePage client:load books={books} />
+  <HomePage books={books} />
 </Layout>

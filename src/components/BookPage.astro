@@ -1,5 +1,6 @@
 ---
 import { TESTAMENT_LABEL, type Prose, type Testament } from "../lib/bible"
+import { getBookSection, getBookSectionMeta } from "../lib/book-sections"
 import {
   type BookVideo,
   getLukeActsPlaylistUrl,
@@ -27,6 +28,8 @@ const playlistUrl = getPlaylistUrl(book.testament)
 const lukeActsUrl =
   book.slug === "luke" || book.slug === "acts" ? getLukeActsPlaylistUrl() : null
 const firstVideo = videos[0]
+const section = getBookSection(book.slug)
+const sectionMeta = getBookSectionMeta(book.slug)
 ---
 
 <div class="tb-page">
@@ -34,12 +37,13 @@ const firstVideo = videos[0]
     <nav class="tb-breadcrumbs" aria-label="Навигация">
       <a href="/">Главная</a>
       <span class="tb-breadcrumbs-sep" aria-hidden="true">/</span>
-      <span aria-current="page">{book.name}</span>
+      <span class="tb-book-accent" data-section={section} aria-current="page">{book.name}</span>
     </nav>
 
     <header class="tb-stack tb-stack--2">
-      <h1>{book.fullName}</h1>
+      <h1 class="tb-book-accent" data-section={section}>{book.fullName}</h1>
       <div class="tb-meta-row">
+        <span class="tb-badge tb-badge--section" data-section={section}>{sectionMeta.label}</span>
         <span class="tb-badge tb-badge--blue">{TESTAMENT_LABEL[book.testament]}</span>
         <span class="tb-muted">{book.chaptersCount} глав</span>
       </div>

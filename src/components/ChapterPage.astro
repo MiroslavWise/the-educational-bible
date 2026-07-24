@@ -5,6 +5,7 @@ import {
   type ChapterNav,
   type Comment,
 } from "../lib/bible"
+import { getBookSection } from "../lib/book-sections"
 
 interface Props {
   book: { slug: string; name: string; chaptersCount: number }
@@ -14,6 +15,7 @@ interface Props {
 
 const { book, chapter, nav } = Astro.props
 const chapters = Array.from({ length: book.chaptersCount }, (_, i) => i + 1)
+const section = getBookSection(book.slug)
 
 function rangeLabel(c: Comment): string {
   return c.verseStart === c.verseEnd
@@ -28,7 +30,7 @@ function rangeLabel(c: Comment): string {
       <nav class="tb-breadcrumbs" aria-label="Навигация">
         <a href="/">Главная</a>
         <span class="tb-breadcrumbs-sep" aria-hidden="true">/</span>
-        <a href={`/${book.slug}`}>{book.name}</a>
+        <a class="tb-book-accent" data-section={section} href={`/${book.slug}`}>{book.name}</a>
         <span class="tb-breadcrumbs-sep" aria-hidden="true">/</span>
         <span aria-current="page">Глава {chapter.number}</span>
       </nav>
@@ -80,7 +82,10 @@ function rangeLabel(c: Comment): string {
 
   <div class="tb-reader-grid">
     <article class="tb-scripture">
-      <h1>{book.name}. Глава {chapter.number}</h1>
+      <h1>
+        <span class="tb-book-accent" data-section={section}>{book.name}</span>. Глава{" "}
+        {chapter.number}
+      </h1>
 
       <div class="tb-verses">
         {
