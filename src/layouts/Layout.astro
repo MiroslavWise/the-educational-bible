@@ -121,7 +121,37 @@ const schemas: (WithContext<Thing> | Thing)[] = jsonLd
   </head>
   <body>
     <GoogleTagManager placement="body" />
-    <slot />
+    <div class="tb-app">
+      <header class="tb-topbar">
+        <div class="tb-topbar-inner">
+          <a class="tb-brand" href="/">📖 Женевская учебная Библия</a>
+        </div>
+      </header>
+      <main class="tb-main">
+        <slot />
+      </main>
+      <footer class="tb-footer">
+        <div class="tb-footer-inner">
+          <p class="tb-footer-label">Разработка сайта</p>
+          <nav class="tb-footer-links" aria-label="Контакты разработчика">
+            <a
+              href="https://miroslav-cv.web.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Мирослав Wise — резюме
+            </a>
+            <a
+              href="https://t.me/MiroslavWise"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Telegram @MiroslavWise
+            </a>
+          </nav>
+        </div>
+      </footer>
+    </div>
     <YandexMetrika />
   </body>
 </html>

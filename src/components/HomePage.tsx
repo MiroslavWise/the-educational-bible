@@ -4,7 +4,6 @@ import { Text } from "@astryxdesign/core/Text"
 import { Badge } from "@astryxdesign/core/Badge"
 import { ClickableCard } from "@astryxdesign/core/ClickableCard"
 import { Divider } from "@astryxdesign/core/Divider"
-import { Shell } from "./reader/Shell"
 import {
   type BookSummary,
   TESTAMENT_LABEL,
@@ -59,7 +58,7 @@ function TestamentSection({
 export default function HomePage({ books }: Props) {
   const grouped = groupByTestament(books)
   return (
-    <Shell>
+    <>
       <section className="tb-hero">
         <VStack gap={4} hAlign="center">
           <Heading level={1} type="display-2">
@@ -80,6 +79,6 @@ export default function HomePage({ books }: Props) {
           <TestamentSection testament="nt" books={grouped.nt} />
         </VStack>
       </div>
-    </Shell>
+    </>
   )
 }

@@ -7,7 +7,6 @@ import { Button } from "@astryxdesign/core/Button"
 import { Divider } from "@astryxdesign/core/Divider"
 import { Popover } from "@astryxdesign/core/Popover"
 import { Breadcrumbs, BreadcrumbItem } from "@astryxdesign/core/Breadcrumbs"
-import { Shell } from "./reader/Shell"
 import {
   type Chapter,
   type Comment,
@@ -228,44 +227,42 @@ export default function ChapterPage({ book, chapter, nav }: Props) {
   )
 
   return (
-    <Shell>
-      <div className="tb-reader">
-        <div className="tb-reader-toolbar">
-          <HStack hAlign="between" vAlign="center" gap={3} wrap="wrap">
-            <Breadcrumbs variant="supporting">
-              <BreadcrumbItem href="/">Главная</BreadcrumbItem>
-              <BreadcrumbItem href={`/${book.slug}`}>{book.name}</BreadcrumbItem>
-              <BreadcrumbItem isCurrent>Глава {chapter.number}</BreadcrumbItem>
-            </Breadcrumbs>
-            <NavButtons />
-          </HStack>
-        </div>
-
-        <div className="tb-reader-grid">
-          <article className="tb-scripture">
-            <Heading level={1} accessibilityLevel={1}>
-              {book.name}. Глава {chapter.number}
-            </Heading>
-            <div className="tb-verses" style={{ marginTop: "var(--spacing-5)" }}>
-              {chapter.verses.map((v) => (
-                <Fragment key={v.number}>
-                  {v.subheading && (
-                    <Heading level={3} color="accent">
-                      <span className="tb-subheading">{v.subheading}</span>
-                    </Heading>
-                  )}
-                  <VerseView verse={v} chapter={chapter} />
-                </Fragment>
-              ))}
-            </div>
-
-            <Divider />
-            <div className="tb-center" style={{ paddingBlock: "var(--spacing-4)" }}>
-              <NavButtons />
-            </div>
-          </article>
-        </div>
+    <div className="tb-reader">
+      <div className="tb-reader-toolbar">
+        <HStack hAlign="between" vAlign="center" gap={3} wrap="wrap">
+          <Breadcrumbs variant="supporting">
+            <BreadcrumbItem href="/">Главная</BreadcrumbItem>
+            <BreadcrumbItem href={`/${book.slug}`}>{book.name}</BreadcrumbItem>
+            <BreadcrumbItem isCurrent>Глава {chapter.number}</BreadcrumbItem>
+          </Breadcrumbs>
+          <NavButtons />
+        </HStack>
       </div>
-    </Shell>
+
+      <div className="tb-reader-grid">
+        <article className="tb-scripture">
+          <Heading level={1} accessibilityLevel={1}>
+            {book.name}. Глава {chapter.number}
+          </Heading>
+          <div className="tb-verses" style={{ marginTop: "var(--spacing-5)" }}>
+            {chapter.verses.map((v) => (
+              <Fragment key={v.number}>
+                {v.subheading && (
+                  <Heading level={3} color="accent">
+                    <span className="tb-subheading">{v.subheading}</span>
+                  </Heading>
+                )}
+                <VerseView verse={v} chapter={chapter} />
+              </Fragment>
+            ))}
+          </div>
+
+          <Divider />
+          <div className="tb-center" style={{ paddingBlock: "var(--spacing-4)" }}>
+            <NavButtons />
+          </div>
+        </article>
+      </div>
+    </div>
   )
 }

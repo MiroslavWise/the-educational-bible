@@ -5,7 +5,6 @@ import { Text } from "@astryxdesign/core/Text"
 import { Badge } from "@astryxdesign/core/Badge"
 import { Divider } from "@astryxdesign/core/Divider"
 import { Breadcrumbs, BreadcrumbItem } from "@astryxdesign/core/Breadcrumbs"
-import { Shell } from "./reader/Shell"
 import { type Prose, type Testament, TESTAMENT_LABEL } from "../lib/bible"
 import {
   type BookVideo,
@@ -133,64 +132,62 @@ function BookVideos({
 
 export default function BookPage({ book, videos = [] }: Props) {
   return (
-    <Shell>
-      <div className="tb-page">
-        <VStack gap={6}>
-          <Breadcrumbs>
-            <BreadcrumbItem href="/">Главная</BreadcrumbItem>
-            <BreadcrumbItem isCurrent>{book.name}</BreadcrumbItem>
-          </Breadcrumbs>
+    <div className="tb-page">
+      <VStack gap={6}>
+        <Breadcrumbs>
+          <BreadcrumbItem href="/">Главная</BreadcrumbItem>
+          <BreadcrumbItem isCurrent>{book.name}</BreadcrumbItem>
+        </Breadcrumbs>
 
-          <VStack gap={2}>
-            <Heading level={1}>{book.fullName}</Heading>
-            <HStack gap={2} vAlign="center">
-              <Badge variant="blue" label={TESTAMENT_LABEL[book.testament]} />
-              <Text type="supporting">{book.chaptersCount} глав</Text>
-            </HStack>
-          </VStack>
-
-          <VStack gap={4}>
-            <Heading level={2}>Главы</Heading>
-            <div className="tb-chapter-grid">
-              {Array.from({ length: book.chaptersCount }, (_, i) => i + 1).map((n) => (
-                <a key={n} className="tb-chapter-cell" href={`/${book.slug}/${n}`}>
-                  {n}
-                </a>
-              ))}
-            </div>
-          </VStack>
-
-          {videos.length > 0 && (
-            <>
-              <Divider />
-              <BookVideos videos={videos} testament={book.testament} bookSlug={book.slug} />
-            </>
-          )}
-
-          {book.introduction.length > 0 && (
-            <>
-              <Divider />
-              <VStack gap={4}>
-                <Heading level={2}>Введение</Heading>
-                <ProseBlock items={book.introduction} />
-              </VStack>
-            </>
-          )}
-
-          {book.articles.length > 0 && (
-            <>
-              <Divider />
-              <VStack gap={4}>
-                <HStack gap={3} vAlign="center">
-                  <Heading level={2}>Тематические статьи</Heading>
-                  <Badge variant="purple" label={`${book.articles.length}`} />
-                </HStack>
-                <ProseBlock items={book.articles} />
-              </VStack>
-            </>
-          )}
+        <VStack gap={2}>
+          <Heading level={1}>{book.fullName}</Heading>
+          <HStack gap={2} vAlign="center">
+            <Badge variant="blue" label={TESTAMENT_LABEL[book.testament]} />
+            <Text type="supporting">{book.chaptersCount} глав</Text>
+          </HStack>
         </VStack>
-      </div>
-    </Shell>
+
+        <VStack gap={4}>
+          <Heading level={2}>Главы</Heading>
+          <div className="tb-chapter-grid">
+            {Array.from({ length: book.chaptersCount }, (_, i) => i + 1).map((n) => (
+              <a key={n} className="tb-chapter-cell" href={`/${book.slug}/${n}`}>
+                {n}
+              </a>
+            ))}
+          </div>
+        </VStack>
+
+        {videos.length > 0 && (
+          <>
+            <Divider />
+            <BookVideos videos={videos} testament={book.testament} bookSlug={book.slug} />
+          </>
+        )}
+
+        {book.introduction.length > 0 && (
+          <>
+            <Divider />
+            <VStack gap={4}>
+              <Heading level={2}>Введение</Heading>
+              <ProseBlock items={book.introduction} />
+            </VStack>
+          </>
+        )}
+
+        {book.articles.length > 0 && (
+          <>
+            <Divider />
+            <VStack gap={4}>
+              <HStack gap={3} vAlign="center">
+                <Heading level={2}>Тематические статьи</Heading>
+                <Badge variant="purple" label={`${book.articles.length}`} />
+              </HStack>
+              <ProseBlock items={book.articles} />
+            </VStack>
+          </>
+        )}
+      </VStack>
+    </div>
   )
 }
