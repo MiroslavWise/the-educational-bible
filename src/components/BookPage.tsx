@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { VStack, HStack } from "@astryxdesign/core/Layout"
 import { Heading } from "@astryxdesign/core/Heading"
 import { Text } from "@astryxdesign/core/Text"
@@ -6,6 +7,13 @@ import { Divider } from "@astryxdesign/core/Divider"
 import { Breadcrumbs, BreadcrumbItem } from "@astryxdesign/core/Breadcrumbs"
 import { Shell } from "./reader/Shell"
 import { type Prose, type Testament, TESTAMENT_LABEL } from "../lib/bible"
+import {
+  type BookVideo,
+  getLukeActsPlaylistUrl,
+  getPlaylistUrl,
+  youtubeEmbedUrl,
+  youtubeThumbUrl,
+} from "../lib/videos"
 
 interface Props {
   book: {
@@ -17,6 +25,7 @@ interface Props {
     introduction: Prose[]
     articles: Prose[]
   }
+  videos?: BookVideo[]
 }
 
 function ProseBlock({ items }: { items: Prose[] }) {
@@ -38,7 +47,91 @@ function ProseBlock({ items }: { items: Prose[] }) {
   )
 }
 
-export default function BookPage({ book }: Props) {
+function BookVideos({
+  videos,
+  testament,
+  bookSlug,
+}: {
+  videos: BookVideo[]
+  testament: Testament
+  bookSlug: string
+}) {
+  const [activeIndex, setActiveIndex] = useState(0)
+  const active = videos[activeIndex] ?? videos[0]
+  if (!active) return null
+
+  const playlistUrl = getPlaylistUrl(testament)
+  const lukeActsUrl =
+    bookSlug === "luke" || bookSlug === "acts" ? getLukeActsPlaylistUrl() : null
+
+  return (
+    <VStack gap={4}>
+      <HStack gap={3} vAlign="center" wrap="wrap">
+        <Heading level={2}>Видео</Heading>
+        <Badge variant="neutral" label={`${videos.length}`} />
+      </HStack>
+
+      <div className="tb-video-embed">
+        <iframe
+          key={active.id}
+          src={youtubeEmbedUrl(active.id)}
+          title={active.title}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+          loading="lazy"
+          referrerPolicy="strict-origin-when-cross-origin"
+        />
+      </div>
+
+      <Text type="supporting">{active.title}</Text>
+
+      {videos.length > 1 && (
+        <div className="tb-video-switcher" role="tablist" aria-label="Выбор видео">
+          {videos.map((video, i) => {
+            const selected = i === activeIndex
+            return (
+              <button
+                key={`${video.id}-${i}`}
+                type="button"
+                role="tab"
+                aria-selected={selected}
+                className="tb-video-switcher-item"
+                data-active={selected ? "true" : undefined}
+                onClick={() => setActiveIndex(i)}
+              >
+                <img
+                  src={youtubeThumbUrl(video.id)}
+                  alt=""
+                  width={120}
+                  height={68}
+                  loading="lazy"
+                />
+                <span className="tb-video-switcher-title">{video.title}</span>
+              </button>
+            )
+          })}
+        </div>
+      )}
+
+      <Text type="supporting">
+        Обзоры{" "}
+        <a href={playlistUrl} target="_blank" rel="noopener noreferrer">
+          BibleProject
+        </a>
+        {lukeActsUrl && (
+          <>
+            {" · "}
+            <a href={lukeActsUrl} target="_blank" rel="noopener noreferrer">
+              серия «Лука–Деяния»
+            </a>
+          </>
+        )}
+      </Text>
+    </VStack>
+  )
+}
+
+export default function BookPage({ book, videos = [] }: Props) {
   return (
     <Shell>
       <div className="tb-page">
@@ -66,6 +159,13 @@ export default function BookPage({ book }: Props) {
               ))}
             </div>
           </VStack>
+
+          {videos.length > 0 && (
+            <>
+              <Divider />
+              <BookVideos videos={videos} testament={book.testament} bookSlug={book.slug} />
+            </>
+          )}
 
           {book.introduction.length > 0 && (
             <>

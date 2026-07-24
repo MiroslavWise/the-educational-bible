@@ -11,6 +11,12 @@ import {
   bookKeywords,
   bookTitle,
 } from "../../lib/seo"
+import {
+  getVideosForBook,
+  youtubeEmbedUrl,
+  youtubeThumbUrl,
+  youtubeWatchUrl,
+} from "../../lib/videos"
 
 export async function getStaticPaths() {
   const entries = await getCollection("books")
@@ -31,6 +37,7 @@ const book = {
   articles: data.articles,
 }
 
+const videos = getVideosForBook(data.slug)
 const introText = data.introduction
   .flatMap((s) => s.paragraphs)
   .find((p) => p.trim().length > 40)
@@ -78,6 +85,24 @@ const jsonLd: Thing[] = [
     ],
   },
 ]
+
+const firstVideo = videos[0]
+if (firstVideo) {
+  jsonLd.push({
+    "@type": "VideoObject",
+    name: firstVideo.title,
+    description: `${firstVideo.title} — обзор книги «${data.fullName}» (BibleProject)`,
+    thumbnailUrl: youtubeThumbUrl(firstVideo.id),
+    embedUrl: youtubeEmbedUrl(firstVideo.id),
+    contentUrl: youtubeWatchUrl(firstVideo.id),
+    inLanguage: "ru",
+    isPartOf: {
+      "@type": "Book",
+      name: data.fullName,
+      url: pageUrl,
+    },
+  })
+}
 ---
 
 <Layout
@@ -88,5 +113,5 @@ const jsonLd: Thing[] = [
   ogType="book"
   jsonLd={jsonLd}
 >
-  <BookPage client:load book={book} />
+  <BookPage client:load book={book} videos={videos} />
 </Layout>

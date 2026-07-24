@@ -326,6 +326,79 @@ body {
   margin: 0 0 var(--spacing-3);
 }
 
+/* Book videos (BibleProject embeds) */
+.tb-video-embed {
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-element);
+  overflow: hidden;
+  background: var(--color-background-muted);
+  border: var(--border-width) solid var(--color-border);
+}
+
+.tb-video-embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.tb-video-switcher {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--spacing-2);
+  max-width: 720px;
+}
+
+.tb-video-switcher-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  margin: 0;
+  padding: var(--spacing-1);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-element);
+  background: var(--color-background-card);
+  color: var(--color-text-primary);
+  text-align: start;
+  cursor: pointer;
+  font: inherit;
+  transition: border-color 0.12s ease, background 0.12s ease;
+}
+
+.tb-video-switcher-item:hover {
+  background: var(--color-overlay-hover);
+  border-color: var(--color-border-emphasized);
+}
+
+.tb-video-switcher-item[data-active="true"] {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 1px var(--color-accent);
+}
+
+.tb-video-switcher-item img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: var(--radius-inner);
+  background: var(--color-background-muted);
+}
+
+.tb-video-switcher-title {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--color-text-secondary);
+}
+
+.tb-video-switcher-item[data-active="true"] .tb-video-switcher-title {
+  color: var(--color-text-primary);
+}
+
 /* Utility */
 .tb-muted {
   color: var(--color-text-secondary);
