@@ -635,7 +635,11 @@ body {
 }
 
 .tb-float-panel {
+  position: fixed;
+  inset: auto;
   margin: 0;
+  top: 0;
+  left: 0;
   padding: var(--spacing-4);
   max-width: min(360px, calc(100vw - var(--spacing-8)));
   border: var(--border-width) solid var(--color-border);
