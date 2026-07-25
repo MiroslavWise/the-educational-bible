@@ -649,6 +649,12 @@ body {
   box-shadow: var(--shadow-raised, 0 8px 24px color-mix(in srgb, var(--color-text-primary) 18%, transparent));
 }
 
+/* Hide until JS places the panel under the verse — avoids top-left flash */
+.tb-float-panel:popover-open:not([data-ready="true"]) {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .tb-float-panel--sm {
   max-width: min(240px, calc(100vw - var(--spacing-8)));
 }

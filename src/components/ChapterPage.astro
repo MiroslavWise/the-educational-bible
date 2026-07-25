@@ -279,14 +279,8 @@ function rangeLabel(c: Comment): string {
 
   function positionPanel(panel: HTMLElement, invoker: HTMLElement) {
     const rect = invoker.getBoundingClientRect()
-    const prevVisibility = panel.style.visibility
-    panel.style.visibility = "hidden"
-    panel.style.top = "0px"
-    panel.style.left = "0px"
-
     const panelWidth = panel.offsetWidth
     const panelHeight = panel.offsetHeight
-    panel.style.visibility = prevVisibility || ""
 
     let top = rect.bottom + GAP
     let left = rect.left
@@ -320,11 +314,20 @@ function rangeLabel(c: Comment): string {
       if (invoker) positionPanel(panel, invoker)
     }
 
+    panel.addEventListener("beforetoggle", ((event: ToggleEvent) => {
+      if (event.newState === "open") {
+        panel.removeAttribute("data-ready")
+      }
+    }) as EventListener)
+
     panel.addEventListener("toggle", () => {
       const open = panel.matches(":popover-open")
       syncVerseActive(panel, open)
       if (open) {
-        requestAnimationFrame(reposition)
+        reposition()
+        panel.setAttribute("data-ready", "true")
+      } else {
+        panel.removeAttribute("data-ready")
       }
     })
 
