@@ -623,7 +623,9 @@ body {
 .tb-chapter-picker-panel {
   position: absolute;
   top: calc(100% + var(--spacing-2));
-  right: 0;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
   z-index: 30;
   width: 280px;
   max-width: min(280px, calc(100vw - var(--spacing-8)));
@@ -632,6 +634,8 @@ body {
   border: var(--border-width) solid var(--color-border);
   background: var(--color-background-surface);
   box-shadow: var(--shadow-raised, 0 8px 24px color-mix(in srgb, var(--color-text-primary) 18%, transparent));
+  max-height: min(60vh, 420px);
+  overflow: auto;
 }
 
 .tb-float-panel {
@@ -901,6 +905,26 @@ body {
   .tb-page,
   .tb-reader {
     padding-inline: var(--spacing-4);
+  }
+
+  .tb-chapter-nav {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .tb-chapter-picker-panel {
+    position: fixed;
+    left: var(--spacing-4);
+    right: var(--spacing-4);
+    width: auto;
+    max-width: none;
+    transform: none;
+    max-height: min(50vh, 360px);
+  }
+
+  .tb-chapter-grid--compact {
+    max-width: none;
+    grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
   }
 
   .tb-footer-inner {

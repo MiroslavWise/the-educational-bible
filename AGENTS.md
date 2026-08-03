@@ -51,3 +51,53 @@ MORE CLI:
   swizzle <Name>     eject component source for deep customization
   upgrade --apply    run after any @astryxdesign/core bump
 <!-- ASTRYX:END -->
+
+
+      <div class="tb-center tb-chapter-nav-footer">
+        <nav class="tb-chapter-nav" aria-label="Переход по главам (низ страницы)">
+          {
+            nav.prev !== null ? (
+              <a class="tb-nav-btn" href={`/${book.slug}/${nav.prev}`}>
+                ← Пред.
+              </a>
+            ) : (
+              <span class="tb-nav-btn tb-nav-btn--disabled" aria-disabled="true">
+                ← Пред.
+              </span>
+            )
+          }
+
+          <details class="tb-chapter-picker">
+            <summary class="tb-chapter-cell tb-chapter-picker-trigger">
+              Глава {chapter.number} ▾
+            </summary>
+            <div class="tb-chapter-picker-panel">
+              <div class="tb-chapter-grid tb-chapter-grid--compact">
+                {
+                  chapters.map((n) => (
+                    <a
+                      class="tb-chapter-cell"
+                      href={`/${book.slug}/${n}`}
+                      aria-current={n === chapter.number ? "page" : undefined}
+                    >
+                      {n}
+                    </a>
+                  ))
+                }
+              </div>
+            </div>
+          </details>
+
+          {
+            nav.next !== null ? (
+              <a class="tb-nav-btn" href={`/${book.slug}/${nav.next}`}>
+                След. →
+              </a>
+            ) : (
+              <span class="tb-nav-btn tb-nav-btn--disabled" aria-disabled="true">
+                След. →
+              </span>
+            )
+          }
+        </nav>
+      </div>

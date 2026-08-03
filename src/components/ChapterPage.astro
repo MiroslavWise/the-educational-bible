@@ -213,8 +213,6 @@ function rangeLabel(c: Comment): string {
           })
         }
       </div>
-
-      <hr class="tb-divider" />
     </article>
   </div>
 </div>
@@ -222,6 +220,7 @@ function rangeLabel(c: Comment): string {
 <script>
   const GAP = 8
   const EDGE = 8
+  const MOBILE_MQ = window.matchMedia("(max-width: 768px)")
 
   function findInvoker(panel: HTMLElement): HTMLElement | null {
     const id = panel.id
@@ -285,5 +284,52 @@ function rangeLabel(c: Comment): string {
 
     window.addEventListener("resize", reposition)
     window.addEventListener("scroll", reposition, true)
+  })
+
+  function positionChapterPicker(picker: HTMLDetailsElement) {
+    const panel = picker.querySelector<HTMLElement>(".tb-chapter-picker-panel")
+    const summary = picker.querySelector<HTMLElement>(".tb-chapter-picker-trigger")
+    if (!panel || !summary) return
+
+    if (!picker.open) {
+      panel.style.removeProperty("top")
+      return
+    }
+
+    if (MOBILE_MQ.matches) {
+      const rect = summary.getBoundingClientRect()
+      panel.style.top = `${Math.round(rect.bottom + GAP)}px`
+      return
+    }
+
+    panel.style.removeProperty("top")
+    const panelRect = panel.getBoundingClientRect()
+    const offset = picker.getBoundingClientRect().left
+
+    if (panelRect.left < EDGE) {
+      panel.style.left = `${EDGE - offset}px`
+      panel.style.transform = "none"
+    } else if (panelRect.right > window.innerWidth - EDGE) {
+      panel.style.left = `${window.innerWidth - EDGE - offset - panelRect.width}px`
+      panel.style.transform = "none"
+    } else {
+      panel.style.removeProperty("left")
+      panel.style.transform = "translateX(-50%)"
+    }
+  }
+
+  document.querySelectorAll<HTMLDetailsElement>(".tb-chapter-picker").forEach((picker) => {
+    picker.addEventListener("toggle", () => {
+      requestAnimationFrame(() => positionChapterPicker(picker))
+    })
+    window.addEventListener("resize", () => positionChapterPicker(picker))
+  })
+
+  document.addEventListener("click", (event) => {
+    const target = event.target
+    if (!(target instanceof Node)) return
+    document.querySelectorAll<HTMLDetailsElement>(".tb-chapter-picker[open]").forEach((picker) => {
+      if (!picker.contains(target)) picker.open = false
+    })
   })
 </script>
